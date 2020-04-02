@@ -19,21 +19,21 @@ PROPAGATION_MANDATORY: 		如果没有，就抛出异常;如果有，就使用当
 type PropagationType int32
 
 const (
-	PropagationRequired    PropagationType = 0 //如果没有,就新建一个事务; 如果有，就加入当前事务
-	PropagationSupports    PropagationType = 1 //如果没有，就以非事务方式执行；如果有，就使用当前事务
-	PropagationMandatory   PropagationType = 2 //如果没有，就抛出异常;如果有，就使用当前事务。
-	PropagationRequiresNew PropagationType = 3 //有没有都新建事务，如果原来有，就将原来的挂起。
+	PropagationType_Required    PropagationType = 0 //如果没有,就新建一个事务; 如果有，就加入当前事务
+	PropagationType_Supports    PropagationType = 1 //如果没有，就以非事务方式执行；如果有，就使用当前事务
+	PropagationType_Mandatory   PropagationType = 2 //如果没有，就抛出异常;如果有，就使用当前事务。
+	PropagationType_RequiresNew PropagationType = 3 //有没有都新建事务，如果原来有，就将原来的挂起。
 )
 
 func (p PropagationType) String() string {
 	switch p {
-	case PropagationRequired:
+	case PropagationType_Required:
 		return "Required"
-	case PropagationSupports:
+	case PropagationType_Supports:
 		return "Supports"
-	case PropagationMandatory:
+	case PropagationType_Mandatory:
 		return "Mandatory"
-	case PropagationRequiresNew:
+	case PropagationType_RequiresNew:
 		return "RequiresNew"
 	default:
 		return ""
