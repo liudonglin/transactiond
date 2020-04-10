@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package txmsg;
+
+enum ActionType {
+    CreateGroup = 0;
+}
+
+message RpcMessage {
+    string groupId = 1;
+    ActionType actionType = 2;
+}
+
+
+service ManageService {
+    rpc sendMessage (RpcMessage) returns (RpcMessage);
+}
