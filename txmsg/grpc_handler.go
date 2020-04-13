@@ -25,6 +25,22 @@ func (s *gRpcServer) JoinGroup(ctx context.Context, in *JoinGroupMessage) (*Resp
 	return &ResponseMessage{Code: "200"}, nil
 }
 
+func (s *gRpcServer) NotifyGroup(ctx context.Context, in *NotifyGroupMessage) (*ResponseMessage, error) {
+	log.Printf("group received notify [%s], stats is [%s] ", in.GroupId, in.State.String())
+	if v, ok := groups[in.GroupId]; ok {
+		print(len(v))
+	}
+	return &ResponseMessage{Code: "200"}, nil
+}
+
+func (s *gRpcServer) NotifyUnit(in *NotifyUnitMessage, out ManageService_NotifyUnitServer) error {
+	log.Printf("group notify [%s]", in.GroupId)
+	if v, ok := groups[in.GroupId]; ok {
+		print(len(v))
+	}
+	return nil
+}
+
 func StartRpcHandler() {
 	s := grpc.NewServer()
 	RegisterManageServiceServer(s, &gRpcServer{})
