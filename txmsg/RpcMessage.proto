@@ -4,16 +4,31 @@ option java_multiple_files = true;
 
 package txmsg;
 
-enum ActionType {
-    CreateGroup = 0;
+enum TransactionModel {
+    // tcc事务模式
+    TCC = 0;
+    // lcn事务模式
+    LCN = 1;
 }
 
-message RpcMessage {
+message ResponseMessage {
+    string code = 1;
+}
+
+message CreateGroupMessage {
     string groupId = 1;
-    ActionType actionType = 2;
 }
 
+message JoinGroupMessage {
+    string groupId = 1;
+    string unitId = 2;
+    TransactionModel model = 3;
+    int32 state = 4;
+}
 
 service ManageService {
-    rpc sendMessage (RpcMessage) returns (RpcMessage);
+
+    rpc createGroup (CreateGroupMessage) returns (ResponseMessage);
+
+    rpc joinGroup (JoinGroupMessage) returns (ResponseMessage);
 }

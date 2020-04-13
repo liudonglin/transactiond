@@ -24,78 +24,179 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type ActionType int32
+type TransactionModel int32
 
 const (
-	ActionType_CreateGroup ActionType = 0
+	// tcc事务模式
+	TransactionModel_TCC TransactionModel = 0
+	// lcn事务模式
+	TransactionModel_LCN TransactionModel = 1
 )
 
-var ActionType_name = map[int32]string{
-	0: "CreateGroup",
+var TransactionModel_name = map[int32]string{
+	0: "TCC",
+	1: "LCN",
 }
 
-var ActionType_value = map[string]int32{
-	"CreateGroup": 0,
+var TransactionModel_value = map[string]int32{
+	"TCC": 0,
+	"LCN": 1,
 }
 
-func (x ActionType) String() string {
-	return proto.EnumName(ActionType_name, int32(x))
+func (x TransactionModel) String() string {
+	return proto.EnumName(TransactionModel_name, int32(x))
 }
 
-func (ActionType) EnumDescriptor() ([]byte, []int) {
+func (TransactionModel) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_a49baf2e5143a5e0, []int{0}
 }
 
-type RpcMessage struct {
-	GroupId              string     `protobuf:"bytes,1,opt,name=groupId,proto3" json:"groupId,omitempty"`
-	ActionType           ActionType `protobuf:"varint,2,opt,name=actionType,proto3,enum=txmsg.ActionType" json:"actionType,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
+type ResponseMessage struct {
+	Code                 string   `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *RpcMessage) Reset()         { *m = RpcMessage{} }
-func (m *RpcMessage) String() string { return proto.CompactTextString(m) }
-func (*RpcMessage) ProtoMessage()    {}
-func (*RpcMessage) Descriptor() ([]byte, []int) {
+func (m *ResponseMessage) Reset()         { *m = ResponseMessage{} }
+func (m *ResponseMessage) String() string { return proto.CompactTextString(m) }
+func (*ResponseMessage) ProtoMessage()    {}
+func (*ResponseMessage) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a49baf2e5143a5e0, []int{0}
 }
 
-func (m *RpcMessage) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RpcMessage.Unmarshal(m, b)
+func (m *ResponseMessage) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ResponseMessage.Unmarshal(m, b)
 }
-func (m *RpcMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RpcMessage.Marshal(b, m, deterministic)
+func (m *ResponseMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ResponseMessage.Marshal(b, m, deterministic)
 }
-func (m *RpcMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RpcMessage.Merge(m, src)
+func (m *ResponseMessage) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResponseMessage.Merge(m, src)
 }
-func (m *RpcMessage) XXX_Size() int {
-	return xxx_messageInfo_RpcMessage.Size(m)
+func (m *ResponseMessage) XXX_Size() int {
+	return xxx_messageInfo_ResponseMessage.Size(m)
 }
-func (m *RpcMessage) XXX_DiscardUnknown() {
-	xxx_messageInfo_RpcMessage.DiscardUnknown(m)
+func (m *ResponseMessage) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResponseMessage.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_RpcMessage proto.InternalMessageInfo
+var xxx_messageInfo_ResponseMessage proto.InternalMessageInfo
 
-func (m *RpcMessage) GetGroupId() string {
+func (m *ResponseMessage) GetCode() string {
+	if m != nil {
+		return m.Code
+	}
+	return ""
+}
+
+type CreateGroupMessage struct {
+	GroupId              string   `protobuf:"bytes,1,opt,name=groupId,proto3" json:"groupId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CreateGroupMessage) Reset()         { *m = CreateGroupMessage{} }
+func (m *CreateGroupMessage) String() string { return proto.CompactTextString(m) }
+func (*CreateGroupMessage) ProtoMessage()    {}
+func (*CreateGroupMessage) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a49baf2e5143a5e0, []int{1}
+}
+
+func (m *CreateGroupMessage) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateGroupMessage.Unmarshal(m, b)
+}
+func (m *CreateGroupMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateGroupMessage.Marshal(b, m, deterministic)
+}
+func (m *CreateGroupMessage) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateGroupMessage.Merge(m, src)
+}
+func (m *CreateGroupMessage) XXX_Size() int {
+	return xxx_messageInfo_CreateGroupMessage.Size(m)
+}
+func (m *CreateGroupMessage) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateGroupMessage.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateGroupMessage proto.InternalMessageInfo
+
+func (m *CreateGroupMessage) GetGroupId() string {
 	if m != nil {
 		return m.GroupId
 	}
 	return ""
 }
 
-func (m *RpcMessage) GetActionType() ActionType {
+type JoinGroupMessage struct {
+	GroupId              string           `protobuf:"bytes,1,opt,name=groupId,proto3" json:"groupId,omitempty"`
+	UnitId               string           `protobuf:"bytes,2,opt,name=unitId,proto3" json:"unitId,omitempty"`
+	Model                TransactionModel `protobuf:"varint,3,opt,name=model,proto3,enum=txmsg.TransactionModel" json:"model,omitempty"`
+	State                int32            `protobuf:"varint,4,opt,name=state,proto3" json:"state,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *JoinGroupMessage) Reset()         { *m = JoinGroupMessage{} }
+func (m *JoinGroupMessage) String() string { return proto.CompactTextString(m) }
+func (*JoinGroupMessage) ProtoMessage()    {}
+func (*JoinGroupMessage) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a49baf2e5143a5e0, []int{2}
+}
+
+func (m *JoinGroupMessage) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_JoinGroupMessage.Unmarshal(m, b)
+}
+func (m *JoinGroupMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_JoinGroupMessage.Marshal(b, m, deterministic)
+}
+func (m *JoinGroupMessage) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_JoinGroupMessage.Merge(m, src)
+}
+func (m *JoinGroupMessage) XXX_Size() int {
+	return xxx_messageInfo_JoinGroupMessage.Size(m)
+}
+func (m *JoinGroupMessage) XXX_DiscardUnknown() {
+	xxx_messageInfo_JoinGroupMessage.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_JoinGroupMessage proto.InternalMessageInfo
+
+func (m *JoinGroupMessage) GetGroupId() string {
 	if m != nil {
-		return m.ActionType
+		return m.GroupId
 	}
-	return ActionType_CreateGroup
+	return ""
+}
+
+func (m *JoinGroupMessage) GetUnitId() string {
+	if m != nil {
+		return m.UnitId
+	}
+	return ""
+}
+
+func (m *JoinGroupMessage) GetModel() TransactionModel {
+	if m != nil {
+		return m.Model
+	}
+	return TransactionModel_TCC
+}
+
+func (m *JoinGroupMessage) GetState() int32 {
+	if m != nil {
+		return m.State
+	}
+	return 0
 }
 
 func init() {
-	proto.RegisterEnum("txmsg.ActionType", ActionType_name, ActionType_value)
-	proto.RegisterType((*RpcMessage)(nil), "txmsg.RpcMessage")
+	proto.RegisterEnum("txmsg.TransactionModel", TransactionModel_name, TransactionModel_value)
+	proto.RegisterType((*ResponseMessage)(nil), "txmsg.ResponseMessage")
+	proto.RegisterType((*CreateGroupMessage)(nil), "txmsg.CreateGroupMessage")
+	proto.RegisterType((*JoinGroupMessage)(nil), "txmsg.JoinGroupMessage")
 }
 
 func init() {
@@ -103,18 +204,24 @@ func init() {
 }
 
 var fileDescriptor_a49baf2e5143a5e0 = []byte{
-	// 172 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x08, 0x2a, 0x48, 0xf6,
-	0x4d, 0x2d, 0x2e, 0x4e, 0x4c, 0x4f, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2d, 0xa9,
-	0xc8, 0x2d, 0x4e, 0x57, 0x8a, 0xe4, 0xe2, 0x42, 0x48, 0x09, 0x49, 0x70, 0xb1, 0xa7, 0x17, 0xe5,
-	0x97, 0x16, 0x78, 0xa6, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0xc1, 0xb8, 0x42, 0x86, 0x5c,
-	0x5c, 0x89, 0xc9, 0x25, 0x99, 0xf9, 0x79, 0x21, 0x95, 0x05, 0xa9, 0x12, 0x4c, 0x0a, 0x8c, 0x1a,
-	0x7c, 0x46, 0x82, 0x7a, 0x60, 0x33, 0xf4, 0x1c, 0xe1, 0x12, 0x41, 0x48, 0x8a, 0xb4, 0x64, 0xb9,
-	0xb8, 0x10, 0x32, 0x42, 0xfc, 0x5c, 0xdc, 0xce, 0x45, 0xa9, 0x89, 0x25, 0xa9, 0xee, 0x20, 0x13,
-	0x05, 0x18, 0x8c, 0x5c, 0xb8, 0x78, 0x7d, 0x13, 0xf3, 0x12, 0xd3, 0x53, 0x83, 0x53, 0x8b, 0xca,
-	0x32, 0x93, 0x53, 0x85, 0x8c, 0xb9, 0xb8, 0x8b, 0x53, 0xf3, 0x52, 0x60, 0x6e, 0x81, 0x99, 0x8e,
-	0x70, 0x9e, 0x14, 0xa6, 0x90, 0x13, 0x53, 0x00, 0x63, 0x12, 0x1b, 0xd8, 0x47, 0xc6, 0x80, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x51, 0x38, 0x4b, 0x2b, 0xe5, 0x00, 0x00, 0x00,
+	// 272 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0x41, 0x4b, 0xfb, 0x40,
+	0x10, 0xc5, 0xff, 0xdb, 0x36, 0x2d, 0x9d, 0x3f, 0x6a, 0x18, 0xa4, 0x46, 0x4f, 0x21, 0x28, 0x04,
+	0xc1, 0x1c, 0xea, 0xd5, 0x83, 0x98, 0x83, 0x54, 0x8c, 0xc8, 0xda, 0x2f, 0xb0, 0x6e, 0x86, 0x10,
+	0xb1, 0xbb, 0x61, 0x77, 0x2b, 0x7e, 0x05, 0x4f, 0x7e, 0x65, 0x49, 0xba, 0x41, 0x88, 0x08, 0xde,
+	0xe6, 0xf1, 0xde, 0xb0, 0x6f, 0x7f, 0x03, 0x21, 0x6f, 0x64, 0x41, 0xd6, 0x8a, 0x8a, 0xb2, 0xc6,
+	0x68, 0xa7, 0x31, 0x70, 0xef, 0x1b, 0x5b, 0x25, 0x67, 0x70, 0xc0, 0xc9, 0x36, 0x5a, 0x59, 0xf2,
+	0x3e, 0x22, 0x4c, 0xa4, 0x2e, 0x29, 0x62, 0x31, 0x4b, 0xe7, 0xbc, 0x9b, 0x93, 0x0c, 0x30, 0x37,
+	0x24, 0x1c, 0xdd, 0x1a, 0xbd, 0x6d, 0xfa, 0x64, 0x04, 0xb3, 0xaa, 0xd5, 0xab, 0xd2, 0x87, 0x7b,
+	0x99, 0x7c, 0x30, 0x08, 0xef, 0x74, 0xad, 0xfe, 0x16, 0xc7, 0x05, 0x4c, 0xb7, 0xaa, 0x76, 0xab,
+	0x32, 0x1a, 0x75, 0x86, 0x57, 0x78, 0x01, 0xc1, 0x46, 0x97, 0xf4, 0x1a, 0x8d, 0x63, 0x96, 0xee,
+	0x2f, 0x8f, 0xb2, 0xae, 0x74, 0xb6, 0x36, 0x42, 0x59, 0x21, 0x5d, 0xad, 0x55, 0xd1, 0xda, 0x7c,
+	0x97, 0xc2, 0x43, 0x08, 0xac, 0x13, 0x8e, 0xa2, 0x49, 0xcc, 0xd2, 0x80, 0xef, 0xc4, 0xf9, 0x29,
+	0x84, 0xc3, 0x05, 0x9c, 0xc1, 0x78, 0x9d, 0xe7, 0xe1, 0xbf, 0x76, 0xb8, 0xcf, 0x1f, 0x42, 0xb6,
+	0xfc, 0x64, 0xb0, 0x57, 0x08, 0x25, 0x2a, 0x7a, 0x22, 0xf3, 0x56, 0x4b, 0xc2, 0x6b, 0xf8, 0x2f,
+	0xbf, 0xff, 0x8c, 0xc7, 0xfe, 0xf1, 0x9f, 0x1c, 0x4e, 0x16, 0xde, 0x1a, 0x92, 0xbc, 0x82, 0xf9,
+	0x4b, 0x0f, 0x01, 0xfb, 0xf2, 0x43, 0x2c, 0xbf, 0x6d, 0xdf, 0x8c, 0x1e, 0xd9, 0xf3, 0xb4, 0x3b,
+	0xd6, 0xe5, 0x57, 0x00, 0x00, 0x00, 0xff, 0xff, 0x41, 0xeb, 0x18, 0x6a, 0xc0, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -129,7 +236,8 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ManageServiceClient interface {
-	SendMessage(ctx context.Context, in *RpcMessage, opts ...grpc.CallOption) (*RpcMessage, error)
+	CreateGroup(ctx context.Context, in *CreateGroupMessage, opts ...grpc.CallOption) (*ResponseMessage, error)
+	JoinGroup(ctx context.Context, in *JoinGroupMessage, opts ...grpc.CallOption) (*ResponseMessage, error)
 }
 
 type manageServiceClient struct {
@@ -140,9 +248,18 @@ func NewManageServiceClient(cc grpc.ClientConnInterface) ManageServiceClient {
 	return &manageServiceClient{cc}
 }
 
-func (c *manageServiceClient) SendMessage(ctx context.Context, in *RpcMessage, opts ...grpc.CallOption) (*RpcMessage, error) {
-	out := new(RpcMessage)
-	err := c.cc.Invoke(ctx, "/txmsg.ManageService/sendMessage", in, out, opts...)
+func (c *manageServiceClient) CreateGroup(ctx context.Context, in *CreateGroupMessage, opts ...grpc.CallOption) (*ResponseMessage, error) {
+	out := new(ResponseMessage)
+	err := c.cc.Invoke(ctx, "/txmsg.ManageService/createGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *manageServiceClient) JoinGroup(ctx context.Context, in *JoinGroupMessage, opts ...grpc.CallOption) (*ResponseMessage, error) {
+	out := new(ResponseMessage)
+	err := c.cc.Invoke(ctx, "/txmsg.ManageService/joinGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -151,35 +268,57 @@ func (c *manageServiceClient) SendMessage(ctx context.Context, in *RpcMessage, o
 
 // ManageServiceServer is the server API for ManageService service.
 type ManageServiceServer interface {
-	SendMessage(context.Context, *RpcMessage) (*RpcMessage, error)
+	CreateGroup(context.Context, *CreateGroupMessage) (*ResponseMessage, error)
+	JoinGroup(context.Context, *JoinGroupMessage) (*ResponseMessage, error)
 }
 
 // UnimplementedManageServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedManageServiceServer struct {
 }
 
-func (*UnimplementedManageServiceServer) SendMessage(ctx context.Context, req *RpcMessage) (*RpcMessage, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+func (*UnimplementedManageServiceServer) CreateGroup(ctx context.Context, req *CreateGroupMessage) (*ResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
+}
+func (*UnimplementedManageServiceServer) JoinGroup(ctx context.Context, req *JoinGroupMessage) (*ResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method JoinGroup not implemented")
 }
 
 func RegisterManageServiceServer(s *grpc.Server, srv ManageServiceServer) {
 	s.RegisterService(&_ManageService_serviceDesc, srv)
 }
 
-func _ManageService_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RpcMessage)
+func _ManageService_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateGroupMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManageServiceServer).SendMessage(ctx, in)
+		return srv.(ManageServiceServer).CreateGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/txmsg.ManageService/SendMessage",
+		FullMethod: "/txmsg.ManageService/CreateGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManageServiceServer).SendMessage(ctx, req.(*RpcMessage))
+		return srv.(ManageServiceServer).CreateGroup(ctx, req.(*CreateGroupMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ManageService_JoinGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(JoinGroupMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManageServiceServer).JoinGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/txmsg.ManageService/JoinGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManageServiceServer).JoinGroup(ctx, req.(*JoinGroupMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -189,8 +328,12 @@ var _ManageService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*ManageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "sendMessage",
-			Handler:    _ManageService_SendMessage_Handler,
+			MethodName: "createGroup",
+			Handler:    _ManageService_CreateGroup_Handler,
+		},
+		{
+			MethodName: "joinGroup",
+			Handler:    _ManageService_JoinGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
