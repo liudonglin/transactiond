@@ -11,6 +11,13 @@ enum TransactionModel {
     LCN = 1;
 }
 
+enum TransactionState {
+    // 事务回滚
+    Rollback = 0;
+    // 事务提交
+    Commit = 1;
+}
+
 message ResponseMessage {
     string code = 1;
 }
@@ -23,7 +30,16 @@ message JoinGroupMessage {
     string groupId = 1;
     string unitId = 2;
     TransactionModel model = 3;
-    int32 state = 4;
+}
+
+message NotifyGroupMessage {
+    string groupId = 1;
+    TransactionState state = 2;
+}
+
+message NotifyUnitMessage {
+    string groupId = 1;
+    TransactionState state = 2;
 }
 
 service ManageService {
@@ -31,4 +47,8 @@ service ManageService {
     rpc createGroup (CreateGroupMessage) returns (ResponseMessage);
 
     rpc joinGroup (JoinGroupMessage) returns (ResponseMessage);
+
+    rpc notifyGroup (NotifyGroupMessage) returns (ResponseMessage);
+
+    rpc notifyUnit (NotifyUnitMessage) returns (stream ResponseMessage);
 }
