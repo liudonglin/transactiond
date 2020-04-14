@@ -50,5 +50,5 @@ service ManageService {
 
     rpc notifyGroup (NotifyGroupMessage) returns (ResponseMessage);
 
-    rpc notifyUnit (NotifyUnitMessage) returns (stream ResponseMessage);
+    rpc notifyUnit (NotifyUnitMessage) returns (stream NotifyUnitMessage);
 }
