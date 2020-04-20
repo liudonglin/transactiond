@@ -39,7 +39,8 @@ message NotifyGroupMessage {
 
 message NotifyUnitMessage {
     string groupId = 1;
-    TransactionState state = 2;
+    string unitId = 2;
+    TransactionState state = 3;
 }
 
 service ManageService {

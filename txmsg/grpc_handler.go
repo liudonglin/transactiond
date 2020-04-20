@@ -48,6 +48,7 @@ func (s *gRpcServer) NotifyGroup(ctx context.Context, in *NotifyGroupMessage) (*
 		}
 
 		for _, info := range infos {
+			msg.UnitId = info.UnitId
 			client := clients[info.Source]
 			client <- msg
 		}
