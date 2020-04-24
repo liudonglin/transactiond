@@ -1,0 +1,1 @@
+protoc --proto_path=./ --gofast_out=plugins=grpc:. raft.proto
