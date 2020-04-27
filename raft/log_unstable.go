@@ -2,6 +2,10 @@ package raft
 
 import pb "transactiond/raft/raftpb"
 
+// unstable.entries[i] has raft log position i+unstable.offset.
+// Note that unstable.offset may be less than the highest log
+// position in storage; this means that the next write to storage
+// might need to truncate the log before persisting unstable.entries.
 type unstable struct {
 	// 快照数据，该快照数据也是未写入Storage中的
 	snapshot *pb.Snapshot
@@ -27,38 +31,42 @@ func (u *unstable) maybeFirstIndex() (uint64, bool) {
 // maybeLastIndex returns the last index if it has at least one
 // unstable entry or snapshot.
 func (u *unstable) maybeLastIndex() (uint64, bool) {
-	if l := len(u.entries); l != 0 {
-		return u.offset + uint64(l) - 1, true
+	if l := len(u.entries); l != 0 { // 检测entries切片的长度
+		return u.offset + uint64(l) - 1, true // 返回entries中最后一条Entry记录的索引值
 	}
-	if u.snapshot != nil {
+	if u.snapshot != nil { //如果存在快照数据，则通过其元数据返回索引值
 		return u.snapshot.Metadata.Index, true
 	}
-	return 0, false
+	return 0, false //entries和snapshot都是空的，则整个unstable其实也就没有任何数据了
 }
 
 // maybeTerm returns the term of the entry at index i, if there
 // is any.
 func (u *unstable) maybeTerm(i uint64) (uint64, bool) {
+	//指定索引位对应的Entry记录已经不在unstable中，可能已经被持久化或是被写入快照
 	if i < u.offset {
 		if u.snapshot == nil {
 			return 0, false
 		}
-		if u.snapshot.Metadata.Index == i {
+		if u.snapshot.Metadata.Index == i { //检测是不是快照所包含的最后一条Entry记录
 			return u.snapshot.Metadata.Term, true
 		}
 		return 0, false
 	}
-	last, ok := u.maybeLastIndex()
+
+	last, ok := u.maybeLastIndex() //获取unstable中最后一条Entry记录的索引
 	if !ok {
 		return 0, false
 	}
-	if i > last {
+	if i > last { //指定的索引值超出了unstable已知范围，查找失败
 		return 0, false
 	}
+	//从entries字段中查找指定的Entry并返回其Term值
 	return u.entries[i-u.offset].Term, true
 }
 
 func (u *unstable) stableTo(i, t uint64) {
+	//查找指定Entry记录的Term值，若查找失败则表示对应的Entry不在unstable中，直接返回
 	gt, ok := u.maybeTerm(i)
 	if !ok {
 		return
@@ -67,9 +75,13 @@ func (u *unstable) stableTo(i, t uint64) {
 	// only update the unstable entries if term is matched with
 	// an unstable entry.
 	if gt == t && i >= u.offset {
+		//指定的Entry记录在unstable.entries中保存
+		//指定索引位之前的Entry记录都已经完成持久化，则将其之前的全部Entry记录删除
 		u.entries = u.entries[i+1-u.offset:]
 		u.offset = i + 1 //更新offset字段
 
+		//随着多次追加日志和截断日志的操作，unstable.entires底层的数组会越来越大，
+		//shrinkEntriesArray()方法会在底层数组长度超过实际占用的两倍时，对底层数组进行缩减
 		u.shrinkEntriesArray()
 	}
 }
@@ -97,6 +109,12 @@ func (u *unstable) stableSnapTo(i uint64) {
 	if u.snapshot != nil && u.snapshot.Metadata.Index == i {
 		u.snapshot = nil
 	}
+}
+
+func (u *unstable) restore(s pb.Snapshot) {
+	u.offset = s.Metadata.Index + 1
+	u.entries = nil
+	u.snapshot = &s
 }
 
 func (u *unstable) truncateAndAppend(ents []pb.Entry) {

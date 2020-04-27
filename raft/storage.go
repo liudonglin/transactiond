@@ -240,9 +240,3 @@ func (ms *MemoryStorage) Append(entries []pb.Entry) error {
 	}
 	return nil
 }
-
-func (u *unstable) restore(s pb.Snapshot) {
-	u.offset = s.Metadata.Index + 1
-	u.entries = nil
-	u.snapshot = &s
-}
